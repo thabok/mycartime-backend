@@ -30,8 +30,7 @@ import spark.Response;
 public class WebService {
 
 	public WebService() {
-		// oh yeah!
-		port(1337);
+		port(getPort(1337));
 		enableCORS("*");
 		before((req, res) -> logIncomingRequest(req));
 		get("/check", (req, res) -> true, JsonUtil.json());
@@ -39,6 +38,17 @@ public class WebService {
 		post("/login", (req, res) -> login(req, res), JsonUtil.json());
 		post("/calculatePlan", (req, res) -> calculatePlan(req, res), JsonUtil.json());
 		post("/logout", (req, res) -> logout(req, res), JsonUtil.json());
+	}
+
+	private int getPort(int defaultPort) {
+		int portAsInt = defaultPort; //default port
+		String port = System.getProperty("app.port");
+		try {
+			portAsInt = Integer.parseInt(port);
+		} catch (NumberFormatException e) {
+			System.err.println("No (or invalid) port value specified. Falling back to default port " + defaultPort);
+		}
+		return portAsInt;
 	}
 
 	/**
